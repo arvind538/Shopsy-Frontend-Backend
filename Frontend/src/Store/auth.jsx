@@ -3,88 +3,104 @@ import { createContext, useContext, useState, useEffect } from "react";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(localStorage.getItem("token"));
-    const [user, setUser] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
-    const [services, setServices] = useState([]);
-    const authorizationToken = `Bearer ${token}`;
 
-    // const API = http://localhost:5001
     const API = import.meta.env.VITE_APP_URL_API;
 
+    const [token, setToken] = useState(localStorage.getItem("token") || "");
+    const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [services, setServices] = useState([]);
 
+    const authorizationToken = token ? `Bearer ${token}` : "";
+
+    // STORE TOKEN
     const storeTokenInLS = (serverToken) => {
+        if (!serverToken) return;
+        localStorage.setItem("token", serverToken);
         setToken(serverToken);
-        return localStorage.setItem("token", serverToken);
     };
 
-    let isLoggedIn = !!token;
+    // LOGOUT
+    const LogoutUser = () => {
+        localStorage.removeItem("token");
+        setToken("");
+        setUser(null);
+    };
+
+    const isLoggedIn = !!token;
     console.log("isLoggedIN", isLoggedIn);
 
-    const LogoutUser = () => {
-        setToken("");
-        return localStorage.removeItem("token");
-    }
-
+    // USER AUTH CHECK
     const userAuthentication = async () => {
         try {
-            setIsLoading(true);
+
+            if (!token) {
+                setIsLoading(false);
+                return;
+            }
+
             const response = await fetch(`${API}/api/auth/user`, {
                 method: "GET",
                 headers: {
-                    Authorization: authorizationToken,
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
                 },
             });
+
+            const data = await response.json();
+
             if (response.ok) {
-                const data = await response.json();
-                console.log("user data", data.userdata);
                 setUser(data.userdata);
-                setIsLoading(false);
             } else {
-                setIsLoading(false);
+                LogoutUser();
             }
 
         } catch (error) {
-            console.error("error fetch user data");
-
+            console.log("User auth error:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
+
+    // SERVICES FETCH
     const getServices = async () => {
         try {
-            const response = await fetch(`${API}/api/data/service`, {
-                method: 'GET',
-            });
+            const response = await fetch(`${API}/api/data/service`);
+
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
                 setServices(data);
-
-            };
-
+            }
 
         } catch (error) {
-            console.log("error form Fronted side", error);
-
+            console.log("Service error:", error);
         }
-    }
+    };
 
+    useEffect(() => {
+        userAuthentication();
+    }, [token]);
 
     useEffect(() => {
         getServices();
-        userAuthentication();
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, LogoutUser, storeTokenInLS, user, services, authorizationToken, isLoading, API }}>
+        <AuthContext.Provider
+            value={{
+                isLoggedIn,
+                storeTokenInLS,
+                LogoutUser,
+                user,
+                services,
+                authorizationToken,
+                isLoading,
+                API,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
 };
 
-export const useAuth = () => {
-    const authContextValue = useContext(AuthContext)
-    if (!authContextValue) {
-        throw new Error("useAuth used outside of the Provider");
-    }
-    return authContextValue;
-}
+export const useAuth = () => useContext(AuthContext);

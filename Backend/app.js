@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require('express');
 const app = express();
 const cors = require("cors");
-const connectDB = require("./Config/db");
+const connectDB = require("./utils/db");
 const authRoute = require("./router/auth-router");
 const contactRoute = require("./router/contact-router");
 const serviceRoute = require("./router/service-router");
@@ -35,14 +35,13 @@ app.use("/api/admin", adminRoute);
 
 app.use(errorMiddleware);
 
-const PORT = process.env.PORT || 5002;
-
-app.get("/", (req, res) => {
-    res.json({ msg: "server is running" });
-})
+const PORT = process.env.PORT || 4041;
 
 connectDB().then(() => {
     app.listen(PORT, () => {
+        // app.get("/", (req, res) => {
+        //     res.status(201).json("running the server");
+        // })
         console.log(`Server running at http://localhost:${PORT}`);
     });
 })

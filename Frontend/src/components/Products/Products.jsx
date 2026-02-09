@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom"
 import Img1 from "../../assets/women/women.png";
 import Img2 from "../../assets/women/women2.jpg";
 import Img3 from "../../assets/women/women3.jpg";
@@ -94,9 +95,9 @@ const Products = () => {
           </div>
           {/* view all button */}
           <div className="flex justify-center">
-            <button className="text-center mt-10 cursor-pointer bg-primary text-white py-1 px-5 rounded-md">
+            <Link to={ "./products"}  className="text-center mt-10 cursor-pointer bg-primary text-white py-1 px-5 rounded-md">
               View All Items
-            </button>
+            </Link>
           </div>
         </div>
       </div>

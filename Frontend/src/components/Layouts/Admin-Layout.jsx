@@ -7,25 +7,27 @@ import { useAuth } from "../../Store/auth";
 
 const AdminLayout = () => {
     const { user, isLoading } = useAuth();
-    console.log("admin Layout", user);
+    console.log("Admin Layout:", user);
 
+    // Loading state
     if (isLoading) {
-        return <h1>Loading ...</h1>;
+        return <h1>Loading...</h1>;
     }
 
-    if (!user.isAdmin) {
-        return <Navigate to="/" />
+    // User null/undefined safe check
+    if (!user || !user.isAdmin) {
+        return <Navigate to="/" />;
     }
 
     return (
         <>
             <header>
-                <div className="container contaier-flow">
+                <div className="container container-fluid">
                     <nav>
-                        <ul className="admin-nav ">
+                        <ul className="admin-nav">
 
                             <li>
-                                <NavLink to="/admin/users" >
+                                <NavLink to="/admin/users">
                                     <ImUsers /> Users
                                 </NavLink>
                             </li>
@@ -37,8 +39,8 @@ const AdminLayout = () => {
                             </li>
 
                             <li>
-                                <NavLink to="/service">
-                                    <MdHomeRepairService /> Service
+                                <NavLink to="/admin/services">
+                                    <MdHomeRepairService /> Services
                                 </NavLink>
                             </li>
 

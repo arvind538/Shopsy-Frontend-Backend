@@ -23,9 +23,15 @@ import AdminUsers from "./Pages/Admin-Users";
 import AdminContacts from "./Pages/Admin-Contacts";
 import AdminUpdate from "./Pages/Admin-Update";
 
+
+
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "./App.css";
+import NewProducts from "./Pages/NewProducts";
+import NewServices from "./Pages/NewServices";
+import Electronics from "./Pages/Electronic";
+import Service from "./Pages/Service";
 
 const App = () => {
   const [orderPopup, setOrderPopup] = React.useState(false);
@@ -41,7 +47,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-gray-900 dark:text-white duration-200">
+    <div className="bg-white dark:bg-gray-900 dark:text-white duration-200  sm:max-w-full">
       <HeaderUp />
       <Navbar />
 
@@ -54,6 +60,7 @@ const App = () => {
           element={
             <>
               <Hero />
+             
               <Products />
               <TopProducts />
               <Banner />
@@ -71,7 +78,16 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/service" element={<Service />} />
+        <Route path="/products" element={<NewProducts />} />
+        <Route path="/services" element={<NewServices />} />
+        <Route path="/electronics" element={<Electronics />} />
+      
 
+
+
+
+       
         <Route path="*" element={<Error />} />
 
 
